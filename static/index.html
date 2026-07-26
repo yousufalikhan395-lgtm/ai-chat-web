@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChaTin - AI Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Screen 1: Welcome -->
+  <div class="screen welcome" id="welcomeScreen">
+    <div class="welcome-inner">
+      <div class="brand-pill">
+        <span class="daisy">🌸</span>
+        ChaTin
+      </div>
+      <h1 class="hero-title">The best AI chatbot in the world with a fun concept</h1>
+      <div class="stamp-gallery">
+        <div class="stamp" style="transform:rotate(-3deg);background:#F8B4C8">
+          <span>🎬</span>
+          <svg class="stamp-play" width="12" height="12" viewBox="0 0 24 24" fill="#fff"><polygon points="6,3 20,12 6,21"/></svg>
+        </div>
+        <div class="stamp" style="transform:rotate(4deg);background:#1A1A1A;margin-top:16px">
+          <span style="color:#fff">🎵</span>
+        </div>
+        <div class="stamp" style="transform:rotate(-5deg);background:#4CAF7A;margin-top:8px">
+          <span>🐱</span>
+        </div>
+        <div class="stamp" style="transform:rotate(2deg);background:#4CAF7A">
+          <span>🏞️</span>
+        </div>
+        <div class="stamp" style="transform:rotate(-2deg);background:#F8B4C8;margin-top:12px">
+          <span>📚</span>
+        </div>
+      </div>
+      <button class="cta-btn" id="welcomeCta">
+        Lest chat now
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Screen 2 & 3: Main App -->
+  <div class="main-app" id="mainApp" style="display:none">
+
+    <!-- Top Bar (cream, shared) -->
+    <header class="top-bar" id="topBar">
+      <button class="top-btn menu-btn" id="menuBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="version-pill" id="botTrigger" title="Select model">
+        <span class="daisy-sm">🌸</span>
+        <span id="botLabel">ChaTin 1.4</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <button class="top-btn edit-btn" id="editBtn" title="Options">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </button>
+    </header>
+
+    <!-- Explore View -->
+    <div class="view explore" id="exploreView">
+      <div class="explore-scroll">
+        <div class="profile-avatar">👩</div>
+        <h2 class="explore-title">Explore knowledge with AI chat</h2>
+        <button class="btn-new-chat" id="newChatBtn">
+          New Chat
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+        </button>
+
+        <section class="section-block">
+          <div class="section-head">
+            <h3>Chat history</h3>
+            <span class="see-all">See All</span>
+          </div>
+          <div class="history-chips" id="historyChips">
+            <div class="chip-empty">Start a chat to see history</div>
+          </div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-head">
+            <h3>Popular Prompt</h3>
+            <span class="see-all">See All</span>
+          </div>
+          <div class="prompt-cards" id="promptCards">
+            <div class="prompt-card prompt-pink" data-prompt="Explain about Sushi Roll recipe">
+              <div class="prompt-title">Explain about Sushi Roll recipe</div>
+              <div class="prompt-sub">Generate by Kanny.low</div>
+              <div class="prompt-deco deco-dots">✦ ✦ ✦</div>
+              <button class="prompt-use">Use this prompt</button>
+            </div>
+            <div class="prompt-card prompt-green" data-prompt="Give the best resolution for 2024">
+              <div class="prompt-title">Give the best resolution for 2024</div>
+              <div class="prompt-sub">Generate by Jon jenny</div>
+              <div class="prompt-deco deco-flower">🌼</div>
+              <button class="prompt-use">Use this prompt</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Chat View -->
+    <div class="view chat" id="chatView">
+      <div class="chat-title-bar">
+        <button class="back-btn" id="backBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <div class="chat-title-text" id="chatTitle">New conversation</div>
+      </div>
+
+      <div class="chat-body" id="chatMessages">
+        <div class="chat-empty">
+          <div class="ce-icon">💬</div>
+          <div class="ce-text">Start a conversation</div>
+        </div>
+      </div>
+
+      <div class="streaming-bar" id="streamingBar" style="display:none">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFD93D" stroke-width="3" stroke-linecap="round"><circle cx="4" cy="12" r="2" fill="#FFD93D"/><circle cx="12" cy="12" r="2" fill="#FFD93D" opacity=".7"/><circle cx="20" cy="12" r="2" fill="#FFD93D" opacity=".4"/></svg>
+        <button class="stop-btn" id="stopBtn">Stop generate</button>
+      </div>
+
+      <div class="input-area">
+        <div class="input-row">
+          <div class="img-preview" id="imgPreviewBar" style="display:none">
+            <img id="imgPreview" src="" alt="">
+            <button class="img-remove" id="removeImg">✕</button>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" id="chatInput" placeholder="Type here..." autocomplete="off">
+            <button class="attach-btn" id="attachBtn" title="Attach image">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+            </button>
+          </div>
+          <button class="send-btn" id="sendBtn" title="Send">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="modalContainer"></div>
+<div id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.1/marked.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

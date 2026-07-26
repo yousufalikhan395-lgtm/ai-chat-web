@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+auth_tokens.json
+chat_ids.json
+.env
+.DS_Store
