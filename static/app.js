@@ -263,6 +263,18 @@ const App = {
     this.scroll();
   },
 
+  updateLastHtml(html) {
+    const els = this.els.chatMessages.querySelectorAll('.msg.ai');
+    if (!els.length) { this.addMessage('ai', ''); return this.updateLastHtml(html); }
+    const bubble = els[els.length - 1].querySelector('.msg-text');
+    if (bubble) {
+      bubble.innerHTML = html;
+      const cur = bubble.querySelector('.cur');
+      if (cur) cur.remove();
+    }
+    this.scroll();
+  },
+
   addCursor() {
     const els = this.els.chatMessages.querySelectorAll('.msg.ai');
     if (!els.length) { this.addMessage('ai', ''); return this.addCursor(); }
@@ -371,8 +383,15 @@ const App = {
             this.state.chatId = p.chat_id;
             localStorage.setItem('chat_id', p.chat_id);
           }
-          if (p.type === 'json' && p.content) {
-            this.updateLast(p.content);
+          if (p.type === 'json') {
+            let html = '';
+            if (Array.isArray(p.images) && p.images.length) {
+              for (const img of p.images) {
+                html += '<img src="' + this.escUrl(img) + '" class="msg-img" onclick="App.viewImg(\'' + this.escUrl(img) + '\')">';
+              }
+            }
+            html += p.content ? this.md(p.content) : '';
+            this.updateLastHtml(html);
             if (p.chat_id) { this.state.chatId = p.chat_id; localStorage.setItem('chat_id', p.chat_id); }
             continue;
           }
