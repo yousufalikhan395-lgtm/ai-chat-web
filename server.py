@@ -258,11 +258,34 @@ async def list_bots(session_id: str = Header(None, alias="X-Session-Id")):
     return {"bots": list(all_bots.values()), "sections": sections}
 
 
+IMAGE_BOT_TYPES = ("chat-image", "gen-image")
+
+
+def _is_image_bot(bot: dict | None) -> bool:
+    return bool(bot and (bot.get("type") in IMAGE_BOT_TYPES
+                         or str(bot.get("stream")).lower() == "false"))
+
+
+def _extract_images(data: dict | None) -> list:
+    images = []
+    mc = (data or {}).get("mixed_content")
+    if isinstance(mc, list):
+        for item in mc:
+            if isinstance(item, dict) and item.get("url"):
+                images.append(item["url"])
+    if not images:
+        extra = (data or {}).get("images")
+        if isinstance(extra, list):
+            images.extend(u for u in extra if isinstance(u, str) and u)
+    return images
+
+
 @app.post("/api/chat/stream")
 async def chat_stream(req: ChatRequest,
                       session_id: str = Header(None, alias="X-Session-Id")):
     token = _get_token(session_id)
     is_image_gen = req.message.strip() == "" and req.image is not None
+    is_image_bot = _is_image_bot(bot_cache.get(req.bot_id))
 
     chat_key = f"{req.bot_id}:{req.chat_id or 'new'}"
     chat_id = req.chat_id
@@ -272,7 +295,7 @@ async def chat_stream(req: ChatRequest,
         "model": (None, req.model),
         "service": (None, req.service),
         "signature": (None, _sign(req.message)),
-        "stream": (None, "true"),
+        "stream": (None, "false" if is_image_bot else "true"),
         "platform": (None, PLATFORM),
         "version_app": (None, VERSION_APP),
         "is_vip": (None, IS_VIP),
@@ -295,7 +318,7 @@ async def chat_stream(req: ChatRequest,
             temp_files.append(f.name)
             parts["file"] = (os.path.basename(f.name), open(f.name, "rb"), "multipart/form-data")
 
-    timeout_val = 180 if is_image_gen else 120
+    timeout_val = 180 if (is_image_gen or is_image_bot) else 120
 
     is_new_chat = chat_id is None
     alt_text = (req.message or "").strip() or f"[image] {(req.image or '')[:40]}"
@@ -328,7 +351,10 @@ async def chat_stream(req: ChatRequest,
                     if cc and cc.get("_id"):
                         chat_ids_store[chat_key] = cc["_id"]
                         _save_chat_ids()
-                    payload = {"type": "json", "content": content or "", "chat_id": (cc or {}).get("_id")}
+                    images = _extract_images(data)
+                    payload = {"type": "json", "content": content or "",
+                               "images": images,
+                               "chat_id": (cc or {}).get("_id")}
                     yield f"data: {json.dumps(payload)}\n\n"
                     if cc and cc.get("_id") and is_new_chat and title_to_set:
                         result = await _auto_title(token, cc["_id"], title_to_set)
